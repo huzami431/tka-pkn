@@ -1,0 +1,1037 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kuis PPKn TKA 2025</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Layout: one-column quiz app on a yellow ground. Sticky scoreboard bar (avatar, skor, waktu, beruntun)
+   above chunky ink-bordered paper cards with hard offset shadows. Single committed look (yellow). */
+:root {
+  --bg: #FFD83A;
+  --bg-deep: #F4C400;
+  --ink: #1C1910;
+  --paper: #FFFCF0;
+  --soft: #FFF0A3;
+  --red: #D4302A;
+  --green: #17803F;
+  --green-bg: #D3F2DC;
+  --red-bg: #FFD9D4;
+  --blue: #2346A8;
+  --muted: #5E5632;
+  --display: 'Bricolage Grotesque', 'Trebuchet MS', Georgia, sans-serif;
+  --body: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { background: var(--bg); }
+body {
+  background-color: var(--bg);
+  background-image: radial-gradient(var(--bg-deep) 1.4px, transparent 1.6px);
+  background-size: 22px 22px;
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 16px;
+  line-height: 1.55;
+  padding-block: 0 56px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+body::before {
+  content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px);
+  z-index: 10; background: var(--bg);
+}
+.wrap { max-width: 760px; margin: 0 auto; }
+h1, h2, h3 { font-family: var(--display); line-height: 1.08; margin: 0; text-wrap: balance; }
+p { margin: 0; }
+button { font-family: inherit; }
+:focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; }
+
+.card {
+  background: var(--paper); border: 2.5px solid var(--ink); border-radius: 18px;
+  box-shadow: 5px 5px 0 var(--ink); padding: 20px; min-width: 0;
+}
+.stack { display: flex; flex-direction: column; gap: 18px; }
+.eyebrow { font-size: .75rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+
+/* buttons */
+.btn {
+  font: 700 1rem var(--body); color: var(--ink); background: var(--paper);
+  border: 2.5px solid var(--ink); border-radius: 12px; padding: 12px 20px; cursor: pointer;
+  box-shadow: 3px 3px 0 var(--ink); transition: transform .08s, box-shadow .08s;
+}
+.btn:hover:not([disabled]) { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--ink); }
+.btn:active:not([disabled]) { transform: translate(3px, 3px); box-shadow: 0 0 0 var(--ink); }
+.btn.primary { background: var(--red); color: #fff; }
+.btn.alt { background: var(--soft); }
+.btn[disabled] { opacity: .45; cursor: not-allowed; box-shadow: none; }
+.btn.big { padding: 15px 28px; font-size: 1.1rem; }
+.row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+
+/* ---------- start ---------- */
+.hero { padding-top: 28px; display: flex; flex-direction: column; gap: 10px; }
+.hero h1 { font-size: clamp(2.3rem, 9vw, 4rem); font-weight: 800; letter-spacing: -.02em; }
+.hero h1 span { background: var(--ink); color: var(--bg); padding: 0 .18em; border-radius: 8px; white-space: nowrap; }
+.hero p { max-width: 54ch; font-weight: 500; }
+.avatars { display: grid; grid-template-columns: repeat(auto-fit, minmax(92px, 1fr)); gap: 10px; }
+.av { position: relative; display: block; cursor: pointer; }
+.av input { position: absolute; opacity: 0; inset: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+.av-card {
+  display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 6px 8px;
+  border: 2.5px solid var(--ink); border-radius: 14px; background: var(--paper); font-size: .8rem; font-weight: 700;
+  transition: transform .1s, box-shadow .1s, background .1s;
+}
+.av input:checked + .av-card { background: var(--soft); box-shadow: 4px 4px 0 var(--red); transform: translate(-2px, -2px); border-color: var(--ink); }
+.av input:focus-visible + .av-card { outline: 3px solid var(--blue); outline-offset: 3px; }
+.av-img { width: 64px; height: 64px; display: block; }
+.av-img svg { width: 100%; height: 100%; display: block; }
+label.fld { display: flex; flex-direction: column; gap: 6px; font-weight: 700; }
+input[type="text"] {
+  font: 600 1rem var(--body); color: var(--ink); background: #fff; border: 2.5px solid var(--ink);
+  border-radius: 12px; padding: 12px 14px; width: 100%;
+}
+.chk { display: flex; align-items: center; gap: 10px; font-weight: 600; cursor: pointer; }
+.chk input { width: 22px; height: 22px; accent-color: var(--red); flex: none; }
+.rules { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; font-size: .9rem; }
+.rules div { background: var(--soft); border: 2px solid var(--ink); border-radius: 12px; padding: 10px 12px; }
+.rules b { display: block; font-family: var(--display); font-size: 1.05rem; }
+.sm-av { width: 40px; height: 40px; display: block; }
+.sm-av svg { width: 100%; height: 100%; display: block; }
+.empty { color: var(--muted); font-weight: 500; }
+
+/* ---------- quiz ---------- */
+.bar {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg);
+  padding: 12px 0 10px; display: flex; flex-direction: column; gap: 10px;
+}
+.bar-top { display: flex; gap: 10px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+.me-box { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.me-box .sm-av { width: 46px; height: 46px; border: 2.5px solid var(--ink); border-radius: 50%; overflow: hidden; background: #fff; flex: none; }
+.me-box b { font-family: var(--display); font-size: 1.1rem; overflow-wrap: anywhere; }
+.stats { display: flex; gap: 8px; flex-wrap: wrap; }
+.stat {
+  background: var(--paper); border: 2.5px solid var(--ink); border-radius: 12px; padding: 4px 12px;
+  display: flex; flex-direction: column; align-items: center; min-width: 74px; box-shadow: 2px 2px 0 var(--ink);
+}
+.stat small { font-size: .65rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.stat b { font-family: var(--display); font-size: 1.25rem; font-variant-numeric: tabular-nums; line-height: 1.2; }
+.stat.hot { background: var(--red); color: #fff; }
+.stat.hot small { color: #FFD9D4; }
+.prog { height: 14px; border: 2.5px solid var(--ink); border-radius: 99px; background: var(--paper); overflow: hidden; }
+.prog i { display: block; height: 100%; background: var(--red); width: 0; transition: width .35s ease; }
+
+.qcard { margin-top: 8px; display: flex; flex-direction: column; gap: 14px; }
+.chips { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.chip { font-size: .72rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; border: 2px solid var(--ink); border-radius: 99px; padding: 2px 10px; background: var(--soft); }
+.chip.k { background: var(--ink); color: var(--bg); }
+.qno { font-family: var(--display); font-weight: 800; font-size: 1.4rem; }
+.passage { color: #2c2813; display: flex; flex-direction: column; gap: 10px; max-width: 68ch; }
+.qtext { font-weight: 700; max-width: 68ch; }
+.speed { display: flex; align-items: center; gap: 8px; font-size: .75rem; font-weight: 700; color: var(--muted); }
+.speed .track { flex: 1; height: 8px; border: 2px solid var(--ink); border-radius: 99px; background: var(--paper); overflow: hidden; }
+.speed .track i { display: block; height: 100%; width: 100%; background: var(--green); transform-origin: left; }
+.opts { display: flex; flex-direction: column; gap: 10px; }
+.opt {
+  display: flex; gap: 12px; align-items: flex-start; width: 100%; text-align: left; color: var(--ink);
+  background: var(--paper); border: 2.5px solid var(--ink); border-radius: 14px; padding: 11px 14px;
+  font: 500 1rem/1.5 var(--body); cursor: pointer; transition: background .1s, transform .08s;
+}
+.opt:hover:not([disabled]) { background: var(--soft); transform: translateX(3px); }
+.opt .key {
+  flex: none; width: 30px; height: 30px; border: 2px solid var(--ink); border-radius: 50%;
+  display: grid; place-items: center; font-weight: 800; font-size: .85rem; background: var(--bg);
+}
+.opt.m .key { border-radius: 8px; }
+.opt .tx { min-width: 0; overflow-wrap: anywhere; padding-top: 3px; }
+.opt[aria-checked="true"] { background: var(--soft); box-shadow: inset 0 0 0 2px var(--ink); }
+.opt[aria-checked="true"] .key { background: var(--ink); color: var(--bg); }
+.opt.correct { background: var(--green-bg); border-color: var(--green); box-shadow: inset 0 0 0 2px var(--green); }
+.opt.correct .key { background: var(--green); color: #fff; border-color: var(--green); }
+.opt.wrong { background: var(--red-bg); border-color: var(--red); box-shadow: inset 0 0 0 2px var(--red); }
+.opt.wrong .key { background: var(--red); color: #fff; border-color: var(--red); }
+.opt.gone { opacity: .35; text-decoration: line-through; pointer-events: none; }
+.opt[disabled] { cursor: default; }
+
+.tf { display: flex; flex-direction: column; }
+.tf-row { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; padding: 12px 0; border-top: 2px dashed var(--ink); }
+.tf-row:first-child { border-top: 0; }
+.tf-row .st { min-width: 0; overflow-wrap: anywhere; font-weight: 500; }
+.tf-row.ok { background: linear-gradient(90deg, var(--green-bg), transparent 90%); }
+.tf-row.no { background: linear-gradient(90deg, var(--red-bg), transparent 90%); }
+.tf-btns { display: flex; gap: 8px; }
+.tfb {
+  font: 700 .9rem var(--body); color: var(--ink); min-width: 74px; padding: 8px 12px; background: var(--paper);
+  border: 2.5px solid var(--ink); border-radius: 10px; cursor: pointer;
+}
+.tfb:hover:not([disabled]) { background: var(--soft); }
+.tfb[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+.tfb.correct { background: var(--green); color: #fff; border-color: var(--green); }
+.tfb.wrong { background: var(--red); color: #fff; border-color: var(--red); }
+.tfb[disabled] { cursor: default; }
+@media (max-width: 520px) {
+  .tf-row { grid-template-columns: 1fr; gap: 8px; }
+  .tfb { flex: 1; }
+  .tf-btns { width: 100%; }
+}
+
+.actions { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; justify-content: space-between; }
+.fb { border: 2.5px solid var(--ink); border-radius: 14px; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; animation: pop .25s ease-out; }
+.fb.ok { background: var(--green-bg); }
+.fb.no { background: var(--red-bg); }
+.fb.mid { background: var(--soft); }
+.fb h3 { font-size: 1.3rem; }
+.fb h3 em { font-style: normal; font-variant-numeric: tabular-nums; }
+.fb .bonus { font-size: .85rem; font-weight: 700; }
+.fb .tag { display: inline-block; font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.fb ul { margin: 0; padding-left: 1.2em; display: flex; flex-direction: column; gap: 4px; }
+.fb .exp { background: rgba(255,255,255,.7); border: 2px solid var(--ink); border-radius: 10px; padding: 10px 12px; }
+.fb .exp b { display: block; font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 2px; }
+@keyframes pop { from { opacity: 0; transform: translateY(8px) scale(.98); } to { opacity: 1; transform: none; } }
+@keyframes shake { 0%,100% { transform: none; } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+.shake { animation: shake .3s; }
+
+/* ---------- result ---------- */
+.res-top { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; }
+.res-av { width: 112px; height: 112px; border: 3px solid var(--ink); border-radius: 50%; overflow: hidden; background: #fff; flex: none; box-shadow: 4px 4px 0 var(--ink); }
+.res-av svg { width: 100%; height: 100%; display: block; }
+.res-top > div { min-width: 0; }
+.res-top h2 { font-size: clamp(1.7rem, 6vw, 2.5rem); font-weight: 800; }
+.big-score { font-family: var(--display); font-weight: 800; font-size: clamp(3.6rem, 16vw, 6rem); line-height: 1; font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+.grid4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; }
+.grid4 .stat { align-items: flex-start; padding: 8px 12px; box-shadow: none; }
+.grid4 .stat b { font-size: 1.5rem; }
+.bk { display: flex; flex-direction: column; gap: 10px; }
+.bk-row { display: grid; grid-template-columns: minmax(110px, 190px) 1fr auto; gap: 10px; align-items: center; font-weight: 600; font-size: .92rem; }
+.bk-row .track { height: 16px; border: 2px solid var(--ink); border-radius: 99px; background: #fff; overflow: hidden; }
+.bk-row .track i { display: block; height: 100%; background: var(--green); }
+.bk-row span:last-child { font-variant-numeric: tabular-nums; font-weight: 700; }
+@media (max-width: 520px) { .bk-row { grid-template-columns: 1fr auto; } .bk-row .track { grid-column: 1 / -1; order: 3; } }
+details.rv { border: 2.5px solid var(--ink); border-radius: 14px; background: #fff; }
+details.rv summary { cursor: pointer; padding: 10px 14px; display: flex; gap: 10px; align-items: center; font-weight: 600; list-style: none; }
+details.rv summary::-webkit-details-marker { display: none; }
+details.rv summary .sn { font-family: var(--display); font-weight: 800; flex: none; }
+details.rv summary .sx { min-width: 0; overflow-wrap: anywhere; flex: 1; }
+details.rv summary .badge { flex: none; font-size: .7rem; font-weight: 800; padding: 2px 8px; border-radius: 99px; border: 2px solid var(--ink); }
+.badge.ok { background: var(--green-bg); }
+.badge.no { background: var(--red-bg); }
+.badge.mid { background: var(--soft); }
+details.rv .rb { padding: 4px 14px 14px; display: flex; flex-direction: column; gap: 8px; border-top: 2px dashed var(--ink); }
+details.rv .rb p, details.rv .rb li { overflow-wrap: anywhere; }
+details.rv .rb ul { margin: 0; padding-left: 1.2em; }
+.rv-list { display: flex; flex-direction: column; gap: 10px; }
+.rv-list[hidden] { display: none !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+<style>body{margin:0}</style>
+</head>
+<body>
+
+
+<div class="wrap" id="app">
+
+  <!-- START -->
+  <section id="s-start" class="stack">
+    <div class="hero">
+      <div class="eyebrow">Pendidikan Pancasila · SMA/MA/SMK</div>
+      <h1>Kuis <span>PPKn</span> TKA 2025</h1>
+      <p>29 soal latihan dari empat elemen: Pancasila, UUD 1945, Bhinneka Tunggal Ika, dan NKRI. Pilih avatar, jawab secepat dan setepat mungkin, lalu baca pembahasan setiap jawaban.</p>
+    </div>
+
+    <div class="card stack">
+      <h2 style="font-size:1.3rem">Pilih avatar</h2>
+      <div class="avatars" id="avatars" role="radiogroup" aria-label="Pilih avatar"></div>
+      <label class="fld" for="nm">Nama panggilan
+        <input type="text" id="nm" maxlength="18" placeholder="Contoh: Rapsanjani" autocomplete="off">
+      </label>
+      <label class="chk" for="shuf"><input type="checkbox" id="shuf" checked> Acak urutan soal</label>
+      <div class="row"><button class="btn primary big" id="go" type="button">Mulai kuis</button></div>
+    </div>
+
+    <div class="card stack">
+      <h2 style="font-size:1.3rem">Cara penilaian</h2>
+      <div class="rules">
+        <div><b>10 poin</b>Jawaban benar penuh. Pilihan ganda kompleks dan Benar/Salah dapat nilai sebagian.</div>
+        <div><b>+5 / +2</b>Bonus cepat jika benar penuh dalam 20 detik atau 40 detik.</div>
+        <div><b>+3</b>Bonus beruntun mulai dari 3 jawaban benar berturut-turut.</div>
+        <div><b>50:50</b>2 kali per kuis untuk soal pilihan ganda, memotong 3 poin soal itu.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUIZ -->
+  <section id="s-quiz" hidden>
+    <div class="bar">
+      <div class="bar-top">
+        <div class="me-box"><span class="sm-av" id="q-av"></span><b id="q-name"></b></div>
+        <div class="stats">
+          <div class="stat"><small>Skor</small><b id="q-score">0</b></div>
+          <div class="stat"><small>Waktu</small><b id="q-time">00:00</b></div>
+          <div class="stat" id="q-streak-box"><small>Beruntun</small><b id="q-streak">0</b></div>
+        </div>
+      </div>
+      <div class="prog" role="progressbar" aria-label="Kemajuan soal" aria-valuemin="0" aria-valuemax="100" id="q-prog"><i id="q-prog-i"></i></div>
+    </div>
+    <div class="card qcard" id="qcard"></div>
+  </section>
+
+  <!-- RESULT -->
+  <section id="s-result" class="stack" hidden></section>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ---------- helpers ---------- */
+  function h(tag, attrs) {
+    var e = document.createElement(tag);
+    if (attrs) for (var k in attrs) {
+      var v = attrs[k];
+      if (k === 'class') e.className = v;
+      else if (k.slice(0, 2) === 'on') e.addEventListener(k.slice(2), v);
+      else if (v === true) e.setAttribute(k, '');
+      else if (v !== false && v != null) e.setAttribute(k, v);
+    }
+    for (var i = 2; i < arguments.length; i++) {
+      var kids = [].concat(arguments[i]);
+      for (var j = 0; j < kids.length; j++) {
+        var c = kids[j];
+        if (c == null || c === false) continue;
+        e.append(c.nodeType ? c : document.createTextNode(String(c)));
+      }
+    }
+    return e;
+  }
+  function $(s) { return document.querySelector(s); }
+  var L = ['A', 'B', 'C', 'D', 'E'];
+  function fmt(ms) {
+    var s = Math.floor(ms / 1000), m = Math.floor(s / 60);
+    return String(m).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
+  }
+  function shuffle(a) {
+    a = a.slice();
+    for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; }
+    return a;
+  }
+  var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- avatars ---------- */
+  var BODY = function (c) { return '<path d="M8 64C8 50 19 47 32 47S56 50 56 64Z" fill="' + c + '" stroke="#1C1910" stroke-width="2"/>'; };
+  var FACE = function (skin) {
+    return '<circle cx="32" cy="36" r="15" fill="' + skin + '" stroke="#1C1910" stroke-width="2"/>' +
+      '<circle cx="26.5" cy="36" r="1.9" fill="#1C1910"/><circle cx="37.5" cy="36" r="1.9" fill="#1C1910"/>' +
+      '<path d="M26 42Q32 47.5 38 42" stroke="#1C1910" stroke-width="2" fill="none" stroke-linecap="round"/>';
+  };
+  var AV = [
+    { id: 'peci', n: 'Si Peci', bg: '#FFE9A8', svg: BODY('#D4302A') + FACE('#E8B07A') +
+      '<path d="M17 28V20Q32 13 47 20V28Q32 23 17 28Z" fill="#1C1910"/>' },
+    { id: 'hijab', n: 'Si Hijab', bg: '#CFE0FF', svg: '<path d="M12 46C9 22 21 12 32 12S55 22 52 46C52 54 45 56 40 56H24C19 56 12 54 12 46Z" fill="#2346A8" stroke="#1C1910" stroke-width="2"/>' +
+      BODY('#2346A8') +
+      '<ellipse cx="32" cy="37" rx="12.5" ry="14" fill="#F0C08C" stroke="#1C1910" stroke-width="2"/>' +
+      '<circle cx="27" cy="37" r="1.9" fill="#1C1910"/><circle cx="37" cy="37" r="1.9" fill="#1C1910"/>' +
+      '<path d="M26.5 43Q32 48 37.5 43" stroke="#1C1910" stroke-width="2" fill="none" stroke-linecap="round"/>' },
+    { id: 'kaca', n: 'Si Kacamata', bg: '#D6F5DF', svg: BODY('#17803F') + FACE('#C98E5B') +
+      '<path d="M17 33C16 17 48 17 47 33C42 26 22 26 17 33Z" fill="#3A2A1E" stroke="#1C1910" stroke-width="2"/>' +
+      '<circle cx="26.5" cy="36" r="5.5" fill="rgba(255,255,255,.5)" stroke="#1C1910" stroke-width="2"/><circle cx="37.5" cy="36" r="5.5" fill="rgba(255,255,255,.5)" stroke="#1C1910" stroke-width="2"/><path d="M32 35.5h0" stroke="#1C1910" stroke-width="2"/>' },
+    { id: 'kepang', n: 'Si Kepang', bg: '#FFD9D4', svg: '<ellipse cx="15.5" cy="48" rx="4.5" ry="10" fill="#5A2E1A" stroke="#1C1910" stroke-width="2"/><ellipse cx="48.5" cy="48" rx="4.5" ry="10" fill="#5A2E1A" stroke="#1C1910" stroke-width="2"/>' +
+      BODY('#F2A93B') + FACE('#F0C08C') +
+      '<path d="M17 34C15 15 49 15 47 34C43 25 21 25 17 34Z" fill="#5A2E1A" stroke="#1C1910" stroke-width="2"/>' +
+      '<circle cx="15" cy="38" r="3" fill="#D4302A" stroke="#1C1910" stroke-width="1.5"/><circle cx="49" cy="38" r="3" fill="#D4302A" stroke="#1C1910" stroke-width="1.5"/>' },
+    { id: 'jambul', n: 'Si Jambul', bg: '#E6D9FF', svg: BODY('#6B4BC8') + FACE('#D9A06B') +
+      '<path d="M16.5 33L18 16L26 24L31 11L37 24L46 15L47.5 33C40 26 24 26 16.5 33Z" fill="#1C1910"/>' },
+    { id: 'topi', n: 'Si Topi', bg: '#FFF0A3', svg: BODY('#D4302A') + FACE('#E8B07A') +
+      '<path d="M16 30C16 14 48 14 48 30Z" fill="#17803F" stroke="#1C1910" stroke-width="2"/><path d="M30 29H55Q55 35 45 35H30Z" fill="#17803F" stroke="#1C1910" stroke-width="2"/>' }
+  ];
+  function avSvg(id) {
+    var a = AV.filter(function (x) { return x.id === id; })[0] || AV[0];
+    return '<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="' + a.n + '"><rect width="64" height="64" fill="' + a.bg + '"/>' + a.svg + '</svg>';
+  }
+  function avEl(id, cls) { var s = h('span', { class: cls }); s.innerHTML = avSvg(id); return s; }
+
+  /* ---------- soal ---------- */
+  // type: s = pilihan ganda, m = pilihan ganda kompleks (MCMA), t = kompleks kategori (benar/salah)
+  var Q = [
+    { n: 1, el: 'Pancasila', type: 's',
+      pas: 'Kepentingan pedagang dan pengguna jalan sangat berbeda; pedagang ingin meningkatkan pendapatan dan menjual produk, sementara pengguna jalan membutuhkan kelancaran dan keamanan pergerakan di jalan umum. Namun, berjualan di fasilitas jalan seperti trotoar atau badan jalan dapat mengganggu fungsi jalan, membahayakan keselamatan, dan melanggar hukum.',
+      q: 'Peran Pancasila dalam memastikan bahwa semua individu memiliki akses yang sama terhadap keadilan berdasarkan ilustrasi tersebut adalah ....',
+      o: ['memberi panduan kepada pedagang cara berjualan yang dapat menjamin hak mendapatkan penghidupan yang layak',
+          'mengarahkan pedagang dan pengguna jalan agar mengutamakan kepentingan bersama setelah kepentingan pribadi terlaksana',
+          'mengingatkan pentingnya kebersamaan dalam menjamin rasa keadilan dan keseimbangan antara hak dan kewajiban',
+          'mengupayakan agar kegiatan pedagang mengutamakan kepentingan pengguna jalan untuk kenyamanan dan ketertiban',
+          'menyelaraskan dua kepentingan untuk menciptakan harmoni sosial yang mengedepankan keseimbangan hak dan kewajiban'],
+      a: 4,
+      x: 'Pancasila menjadi dasar untuk menyelaraskan kepentingan pedagang (hak atas penghidupan) dan pengguna jalan (hak atas keselamatan dan kelancaran), sehingga hak dan kewajiban berjalan seimbang dan tercipta harmoni sosial. Pilihan lain hanya memihak satu pihak atau menyebut sebagian persoalan.' },
+
+    { n: 2, el: 'UUD 1945', type: 's',
+      pas: 'Pasal 27 ayat (3) UUD NRI Tahun 1945 menyatakan bahwa “Setiap warga negara berhak dan wajib ikut serta dalam upaya pembelaan negara.”',
+      q: 'Berdasarkan ilustrasi, hak warga negara yang mencerminkan pasal tersebut yaitu warga negara berhak ....',
+      o: ['mengikuti kegiatan sosial dan wajib mematuhi peraturan yang ditetapkan oleh pemerintah dalam lingkungannya',
+          'memperoleh pendidikan dan wajib menerapkan nilai-nilai kebangsaan dalam kehidupan sehari-hari',
+          'menyampaikan aspirasi kepada pemerintah dan wajib menaati aturan hukum yang berlaku di masyarakat',
+          'terlibat dalam kegiatan kemasyarakatan dan wajib ikut menjaga ketertiban serta ketentraman lingkungan sekitarnya',
+          'memperoleh perlindungan negara dan wajib ikut berpartisipasi menjaga keamanan serta kedaulatan bangsa'],
+      a: 4,
+      x: 'Pasal 27 ayat (3) memuat hak sekaligus kewajiban bela negara. Hak yang sejalan adalah memperoleh perlindungan negara, dan kewajiban yang menyertainya adalah ikut menjaga keamanan serta kedaulatan bangsa. Pilihan lain berkaitan dengan hak sosial, pendidikan, aspirasi, atau kemasyarakatan, bukan pembelaan negara.' },
+
+    { n: 3, el: 'Bhinneka Tunggal Ika', type: 'm',
+      pas: 'Pemerintah terus mendorong harmoni dalam keberagaman melalui berbagai program. Salah satunya adalah Festival Toleransi dan Budaya Pelajar yang melibatkan siswa SMA dari berbagai daerah. Kegiatan ini meliputi pertukaran budaya, pameran kearifan lokal, dan diskusi lintas suku, agama, serta bahasa.',
+      q: 'Berdasarkan informasi tersebut, pernyataan mana saja yang menunjukkan sikap positif sebagai modal sosial untuk pembangunan nasional?',
+      o: ['terlibat secara aktif dalam pertukaran budaya dan belajar mengenal keunikan budaya yang lain',
+          'menjalin komunikasi secara wajar dengan tetap menjaga kenyamanan dalam keberagaman budaya',
+          'menghormati simbol-simbol dari berbagai adat dan agama saat berkunjung ke daerah-daerah lain',
+          'membagikan pengalaman kegiatan lintas budaya di media sosial sebagai inspirasi untuk masyarakat',
+          'menyampaikan pendapat dengan hati-hati saat melakukan diskusi agar keputusan segera terwujud'],
+      a: [0, 1, 2],
+      x: 'Festival ini menonjolkan pertukaran budaya, pengenalan kearifan lokal, dan diskusi lintas suku, agama, dan bahasa. Sikap yang sejalan adalah aktif bertukar budaya (A), berkomunikasi wajar dan menjaga kenyamanan (B), serta menghormati simbol adat dan agama (C). D hanya berupa publikasi di media sosial dan belum menunjukkan sikap saling menghargai secara langsung. E keliru karena diskusi lintas budaya mengutamakan saling menghargai, bukan mempercepat keputusan.' },
+
+    { n: 4, el: 'NKRI', type: 's',
+      pas: 'Penyebaran paham radikalisme di media sosial untuk merubah ideologi negara semakin marak terjadi. Hal ini memengaruhi generasi muda dan menciptakan konflik horizontal di masyarakat.',
+      q: 'Upaya terbaik untuk melindungi keutuhan NKRI dari dampak tersebut adalah ...',
+      o: ['mengadakan dialog terbuka dengan kelompok radikal untuk mencari titik temu dan mengurangi konflik ideologi',
+          'memperkuat pendidikan Pancasila dan literasi digital di sekolah serta melibatkan tokoh agama dalam edukasi masyarakat',
+          'meningkatkan pengawasan ketat terhadap aktivitas media sosial dan memberikan teguran bagi penyebar konten radikal',
+          'mengorganisir kampanye nasional anti radikalisme melalui berbagai platform media untuk membentuk opini publik',
+          'membentuk forum diskusi antargenerasi untuk membahas perbedaan pandangan ideologi secara demokratis'],
+      a: 1,
+      x: 'Radikalisme di media sosial paling efektif dicegah dari akarnya: memperkuat pendidikan Pancasila dan literasi digital agar generasi muda tidak mudah terpengaruh, dengan melibatkan tokoh agama. Dialog dengan kelompok radikal, pengawasan, kampanye, atau forum diskusi bersifat pendukung dan kurang menyentuh penguatan ideologi.' },
+
+    { n: 5, el: 'NKRI', type: 's',
+      pas: 'Indonesia sebagai negara kepulauan yang multietnis menghadapi tantangan disintegrasi yang sering dipicu oleh isu ketidakadilan, diskriminasi, dan penyebaran hoaks.',
+      q: 'Cara warga negara dalam mengatasi tantangan tersebut dapat dilakukan dengan ....',
+      o: ['mengajak masyarakat menjaga budaya lokal dengan membatasi pengaruh budaya luar yang masuk',
+          'menyebarkan informasi yang benar dan membangun dialog antarkelompok untuk mencegah konflik',
+          'mendorong pembentukan kelompok sosial yang terdiri dari warga dengan latar belakang yang sama',
+          'berpartisipasi dalam diskusi di media sosial dengan menyuarakan pandangan kelompok minoritas',
+          'meminimalkan pernyataan atau aktivitas yang dapat menimbulkan gesekan antarkelompok di masyarakat'],
+      a: 1,
+      x: 'Disintegrasi dipicu ketidakadilan, diskriminasi, dan hoaks. Menyebarkan informasi yang benar melawan hoaks, sedangkan dialog antarkelompok mencegah konflik. Pilihan lain membatasi budaya, membentuk kelompok seragam, membela satu kelompok, atau hanya menghindari gesekan tanpa menyelesaikan akar masalah.' },
+
+    { n: 6, el: 'Pancasila', type: 's',
+      pas: 'Terjadi perdebatan sengit di masyarakat dan parlemen terkait wacana amandemen UUD 1945 di mana sebagian pihak mengusulkan agar pemilihan presiden dikembalikan ke MPR, sedangkan sebagian lain ingin mempertahankan sistem pemilihan langsung oleh rakyat. Ketegangan ini menimbulkan kekhawatiran akan mundurnya demokrasi di Indonesia.',
+      q: 'Berdasarkan ilustrasi, pentingnya Pancasila untuk memecahkan masalah tersebut karena ....',
+      o: ['menjadi dasar mempertimbangkan setiap perubahan agar tetap menjamin kedaulatan rakyat dan keadilan sosial secara seimbang',
+          'digunakan sebagai alat hukum tertinggi Indonesia agar perubahan aturan tidak menyalahi sistem pemerintahan yang sudah berlaku',
+          'menjadi acuan teknis lembaga legislatif di Indonesia dalam menentukan batasan perubahan agar tidak melewati kewenangan politik',
+          'digunakan oleh lembaga eksekutif agar pelaksanaan pemerintahan di Indonesia tetap stabil di tengah konflik politik yang terjadi',
+          'dijadikan dasar keputusan oleh lembaga yudikatif untuk menilai apakah usulan perubahan tersebut sesuai kepentingan negara'],
+      a: 0,
+      x: 'Pancasila adalah dasar negara yang menjadi pertimbangan setiap perubahan aturan agar tetap menjamin kedaulatan rakyat (sila keempat) dan keadilan sosial (sila kelima). Pilihan lain menempatkan Pancasila sebagai alat teknis lembaga tertentu, padahal fungsinya sebagai dasar dan sumber nilai bagi seluruh penyelenggaraan negara.' },
+
+    { n: 7, el: 'UUD 1945', type: 's',
+      pas: 'Salah satu bentuk kerja sama antara pemerintah pusat dan pemerintah daerah adalah dalam hal Penanggulangan Kemiskinan. Kerja sama dalam penanggulangan kemiskinan melibatkan pemerintah pusat yang memberikan kebijakan dan program, sementara pemerintah daerah melaksanakan program tersebut di tingkat daerah termasuk bantuan sosial, pelatihan, dan pengembangan usaha mikro.',
+      q: 'Bentuk kerja sama ini dilakukan karena ...',
+      o: ['Pemerintah pusat mengembangkan program-program yang dapat diimplementasikan oleh pemerintah daerah, seperti program pelatihan kerja, bantuan sosial, dan pengembangan ekonomi lokal',
+          'Pemerintah daerah dapat mengembangkan ekonomi lokal dengan menciptakan lapangan kerja, mendukung usaha kecil dan menengah, serta meningkatkan infrastruktur',
+          'Pemerintah daerah dapat menyediakan program bantuan sosial seperti bantuan pangan, bantuan biaya pendidikan, dan bantuan kesehatan untuk masyarakat miskin.',
+          'Pemerintah daerah dapat mengidentifikasi dan memetakan kemiskinan di daerahnya, sehingga dapat mengajukan permohonan bantuan kepada pemerintah pusat untuk mengatasinya',
+          'Pemerintah daerah dapat meningkatkan kapasitas masyarakat melalui pelatihan dan pendidikan, sehingga masyarakat dapat meningkatkan keterampilan dan kemampuan mereka'],
+      a: 0,
+      x: 'Dalam penanggulangan kemiskinan, pemerintah pusat menyusun kebijakan dan program, lalu pemerintah daerah melaksanakannya sesuai kondisi setempat. Inilah alasan kerja sama dilakukan: pusat mengembangkan program yang dapat diimplementasikan daerah (pelatihan kerja, bantuan sosial, ekonomi lokal). Pilihan lain hanya menggambarkan peran pemerintah daerah.' },
+
+    { n: 8, el: 'Bhinneka Tunggal Ika', type: 'm',
+      pas: 'Keberagaman bangsa Indonesia merupakan salah satu kekuatan dan kekayaan bangsa, namun juga dapat menjadi tantangan dalam membangun kesatuan dan persatuan. Oleh karena itu, penting untuk meningkatkan sikap toleransi, saling menghormati, dan kerja sama antaretnis dan agama.',
+      q: 'Berdasarkan ilustrasi tersebut, pernyataan mana saja yang menjelaskan tujuan integrasi nasional dalam bingkai Bhinneka Tunggal Ika?',
+      o: ['Integrasi bangsa Indonesia bertujuan untuk membangun kesatuan dan persatuan bangsa, sehingga masyarakat Indonesia dapat hidup harmonis dan sejahtera',
+          'Integrasi bangsa Indonesia bertujuan untuk meningkatkan kualitas hidup masyarakat Indonesia melalui pembangunan ekonomi, pendidikan, dan kesehatan',
+          'Integrasi Bangsa Indonesia bertujuan untuk menjadikan bangsa Indonesia menjadi Negara yang kuat dan bangsa yang disegani dalam percaturan internasional',
+          'Integrasi yang berasal dari kebinekaan bangsa Indonesia bertujuan meningkatkan kerjasama antarpemeluk agama dan suku bangsa sehingga tercipta bangsa yang besar',
+          'Integrasi nasional Indonesia bertujuan mengembangkan identitas nasional yang kuat dan bangga, sehingga masyarakat Indonesia dapat memiliki rasa kebanggaan dan cinta tanah air'],
+      a: [0, 3, 4],
+      x: 'Tujuan integrasi nasional adalah membangun persatuan agar masyarakat hidup harmonis (A), meningkatkan kerja sama antarumat beragama dan suku bangsa (D), serta menguatkan identitas nasional dan rasa cinta tanah air (E). B (kualitas hidup lewat pembangunan) dan C (menjadi negara kuat dan disegani) merupakan tujuan pembangunan atau politik luar negeri, bukan tujuan integrasi nasional.' },
+
+    { n: 9, el: 'NKRI', type: 's',
+      pas: 'Panca gatra adalah aspek sosial kemasyarakatan dalam wawasan nusantara yang bersifat dinamis meliputi ideologi, politik, ekonomi, sosial budaya dan pertahanan keamanan. Gatra ekonomi sebagai salah satu aspek dalam wawasan nusantara merujuk pada aspek ekonomi yang menjadi bagian integral dari cara pandang bangsa Indonesia terhadap wilayah dan potensi negaranya. Wawasan nusantara dalam bidang ekonomi juga mengamanatkan pelaksanaan demokrasi ekonomi.',
+      q: 'Pentingnya hal tersebut dalam menjaga keutuhan NKRI adalah ....',
+      o: ['mewujudkan pembangunan yang menjamin terwujudnya pemerataan pendapatan',
+          'mendorong untuk terus mengembangkan kehidupan ekonomi yang kuat dan mandiri',
+          'menekankan pentingnya eksplorasi dan eksploitasi potensi ekonomi antardaerah di Indonesia',
+          'melibatkan potensi dan partisipasi dari seluruh masyarakat, bukan hanya pihak tertentu',
+          'mengeksplorasi seluruh kekayaan alam dan potensi ekonomi strategis Indonesia'],
+      a: 3,
+      x: 'Wawasan nusantara bidang ekonomi mengamanatkan demokrasi ekonomi, yaitu pembangunan yang melibatkan potensi dan partisipasi seluruh rakyat, bukan hanya pihak tertentu. Keterlibatan semua pihak menumbuhkan rasa memiliki dan keadilan sehingga memperkuat keutuhan NKRI. Pilihan lain menekankan hasil atau eksploitasi sumber daya tanpa menyebut asas demokrasi ekonomi.' },
+
+    { n: 10, el: 'Pancasila', type: 's',
+      pas: 'Dalam negara demokrasi, pemilihan umum merupakan sarana utama mewujudkan kedaulatan rakyat. Pemilu merupakan proses penting dalam sistem demokrasi yang memungkinkan rakyat untuk memilih wakil-wakil mereka dalam pemerintahan.',
+      q: 'Perilaku yang mencerminkan hak asasi manusia sesuai dengan sila keempat Pancasila berdasarkan ilustrasi tersebut adalah ....',
+      o: ['menggunakan hak pilih sesuai dengan arah kebijakan dari partai politik',
+          'menghormati perbedaan pendapat dan pilihan politik dalam masyarakat',
+          'berpartisipasi aktif dengan cara mengikuti kampanye seluruh partai politik',
+          'mengikuti debat dalam pemilu untuk menilai strategi pemenangan para kandidat',
+          'menerima hasil dari setiap tahapan pemilu karena pelaksanaannya di awasi negara'],
+      a: 1,
+      x: 'Sila keempat menekankan musyawarah dan penghargaan atas perbedaan pendapat. Dalam pemilu, sikap yang mencerminkan hak asasi manusia sesuai sila ini adalah menghormati perbedaan pendapat dan pilihan politik orang lain. Pilihan lain hanya menggambarkan kepatuhan pada partai, mengikuti kampanye, menilai strategi, atau menerima hasil.' },
+
+    { n: 11, el: 'UUD 1945', type: 's',
+      pas: 'Dalam pelaksanaan Pilkada Serentak tahun 2024 lalu, terjadi perselisihan hasil penghitungan suara salah satu daerah. Dua pasangan calon saling mengklaim kemenangan, sementara rekapitulasi suara oleh KPU daerah dituding tidak transparan. Salah satu pasangan calon kemudian menggugat hasil Pilkada tersebut karena diduga terjadi kecurangan yang bersifat terstruktur, sistematis, dan masif (TSM) yang dapat memengaruhi hasil akhir pemilihan.',
+      q: 'Berdasarkan sistem ketatanegaraan Indonesia, cara menyelesaikan permasalahan tersebut sesuai kewenangan lembaga negara adalah ...',
+      o: ['Presiden menetapkan peraturan pemerintah untuk mengatur ketentuan penyelesaian perbedaan penghitungan suara',
+          'Mahkamah Konstitusi melaksanakan kewenangannya dengan memutus perselisihan tentang hasil pemilukada',
+          'Komisi Pemilihan Umum membuat aturan internal tentang penyelesaian perselisihan hasil perhitungan suara pemilukada',
+          'Badan Pengawas Pemilihan Umum memerintahkan dilakukannya pemungutan suara ulang untuk kepastian hasil',
+          'DPRD bersama Pemerintah Daerah membuat peraturan daerah yang mengatur pemilukada yang lebih lengkap'],
+      a: 1,
+      x: 'Perselisihan hasil pemilihan kepala daerah diselesaikan oleh Mahkamah Konstitusi sesuai kewenangannya. KPU berperan sebagai penyelenggara, Bawaslu sebagai pengawas, sedangkan Presiden dan DPRD tidak berwenang memutus sengketa hasil pemilihan.' },
+
+    { n: 12, el: 'Bhinneka Tunggal Ika', type: 's',
+      pas: 'Diskriminasi adalah perlakuan yang tidak adil terhadap seseorang atau kelompok berdasarkan perbedaan suku, agama, ras, jenis kelamin, atau status sosial. Apabila dibiarkan, diskriminasi dapat memicu konflik dan menjadi ancaman serius bagi integrasi nasional Indonesia.',
+      q: 'Berdasarkan ilustrasi, upaya yang perlu dilakukan untuk menghadapi ancaman tersebut agar integrasi nasional tetap terjaga adalah....',
+      o: ['mendorong tumbuhnya semangat memperjuangkan kebebasan individu dalam kehidupan bernegara',
+          'mengajak setiap individu untuk saling mengakui sebagai makhluk yang memiliki kebebasan dan merdeka',
+          'mengutamakan dialog antarwarga untuk memperkuat rasa saling pengertian dan mencegah prasangka',
+          'menempatkan orang lain sesuai posisi sosialnya sebagai bagian dari tatanan masyarakat yang teratur',
+          'menumbuhkan sikap saling menghormati karena setiap manusia memiliki harkat dan martabat yang sama'],
+      a: 2,
+      x: 'Prasangka adalah pemicu diskriminasi. Dialog antarwarga memperkuat saling pengertian dan mencegah prasangka, sehingga langsung menyasar penyebab ancaman integrasi. A dan B menekankan kebebasan individu, D menempatkan orang menurut posisi sosial sehingga justru memelihara diskriminasi, dan E adalah nilai dasar yang benar tetapi kurang konkret sebagai upaya menghadapi ancaman.' },
+
+    { n: 13, el: 'NKRI', type: 't',
+      pas: 'Globalisasi ekonomi mendorong masuknya berbagai produk luar negeri ke pasar Indonesia. Apabila tidak disikapi dengan bijak, hal ini dapat menurunkan daya saing produk lokal dan mengancam perekonomian nasional.',
+      q: 'Berdasarkan ilustrasi, tentukan Benar atau Salah dari setiap pernyataan berikut yang menunjukkan peran warga negara dalam menjaga keutuhan NKRI berdasarkan dinamika tersebut!',
+      s: [{ t: 'berperan sebagai konsumen yang mendukung produk dalam negeri untuk memperkuat perekonomian nasional', a: true },
+          { t: 'berpartisipasi dalam kegiatan ekonomi yang mendorong daya saing bangsa di tengah arus globalisasi', a: true },
+          { t: 'berpartisipasi dengan membeli produk-produk dalam negeri karena memiliki harga lebih murah', a: false }],
+      x: 'Mendukung produk dalam negeri sebagai konsumen memperkuat perekonomian nasional (Benar), dan berpartisipasi dalam kegiatan ekonomi yang mendorong daya saing menghadapi globalisasi juga tepat (Benar). Pernyataan ketiga Salah karena alasannya hanya harga murah, bukan kesadaran menjaga perekonomian nasional sebagai peran warga negara.' },
+
+    { n: 14, el: 'Pancasila', type: 's',
+      pas: 'Bunyi sila kedua dan keempat Pancasila yaitu “Kemanusiaan yang Adil dan Beradab” dan “Kerakyatan yang Dipimpin oleh Hikmat Kebijaksanaan dalam Permusyawaratan Perwakilan”.',
+      q: 'Perilaku yang berhubungan dengan kedua sila Pancasila tersebut adalah ...',
+      o: ['menghormati perbedaan pendapat teman dan bekerja sama untuk menyelesaikan tugas kelompok dengan baik',
+          'memberikan perlakuan yang sama kepada semua orang tanpa membeda-bedakan latar belakang suku dan agama',
+          'bekerja sama dengan warga lain untuk membangun fasilitas umum yang dapat dinikmati oleh seluruh masyarakat',
+          'memberikan bantuan kepada korban banjir suatu daerah berdasarkan hasil musyawarah seluruh warga kampung',
+          'menghormati hak asasi manusia dengan bersikap adil dan beradab kepada sesama antarumat beragama'],
+      a: 3,
+      x: 'Sila kedua (kemanusiaan) dan sila keempat (musyawarah) tampak bersamaan pada bantuan untuk korban banjir yang diputuskan lewat musyawarah warga: ada kepedulian kemanusiaan dan keputusan bersama. Pilihan lain hanya mencerminkan salah satu sila, atau sila lain seperti persatuan dan keadilan sosial.' },
+
+    { n: 15, el: 'UUD 1945', type: 't',
+      pas: 'Mahkamah Konstitusi (MK) adalah lembaga negara yang mempunyai wewenang sebagaimana di atur dalam Undang-Undang Dasar Negara RI Tahun 1945.',
+      q: 'Klik pada pilihan Benar atau Salah dari setiap pernyataan berikut berkaitan dengan Wewenang Mahkamah Konstitusi!',
+      s: [{ t: 'memutuskan pendapat DPR mengenai dugaan pelanggaran oleh Presiden dan Wakil Presiden', a: true },
+          { t: 'menguji peraturan perundang-undangan di bawah undang-undang terhadap undang-undang', a: false },
+          { t: 'mengganti dan sekaligus melantik Presiden dan/atau Wakil Presiden dalam masa jabatannya', a: false }],
+      x: 'Memutus pendapat DPR tentang dugaan pelanggaran oleh Presiden dan/atau Wakil Presiden adalah wewenang MK (Benar). Menguji peraturan di bawah undang-undang terhadap undang-undang adalah wewenang Mahkamah Agung (Salah). Mengganti dan melantik Presiden berada pada ranah MPR, bukan MK (Salah).' },
+
+    { n: 16, el: 'Bhinneka Tunggal Ika', type: 't',
+      pas: 'Bangsa Indonesia adalah bangsa yang memiliki keberagaman suku, agama, bahasa, adat istiadat, dan budaya yang hidup berdampingan. Kebinekaan dapat menjadi fondasi kokoh yang menopang persatuan dan kesatuan bangsa. Namun adanya perbedaan juga dapat menjadi ancaman persatuan dan kesatuan.',
+      q: 'Klik Benar atau Salah dari setiap pernyataan berikut yang menunjukkan upaya menjaga integrasi nasional dalam bingkai kebhinekaan!',
+      s: [{ t: 'menghormati dan melindungi hak asasi manusia untuk semua warga negara, tanpa membedakan latar belakang budaya, agama, atau suku bangsa', a: true },
+          { t: 'mengawasi dan menangani konflik yang berpotensi mengancam integrasi nasional, serta meningkatkan kerja sama antarlembaga dan masyarakat', a: true },
+          { t: 'meningkatkan dialog dan komunikasi antarkelompok masyarakat untuk memperkuat persatuan bangsa dengan menyesuaikan perkembangan budaya lain', a: false }],
+      x: 'Melindungi hak asasi semua warga tanpa membeda-bedakan (Benar) dan menangani konflik sambil memperkuat kerja sama antarlembaga dan masyarakat (Benar) adalah upaya menjaga integrasi. Pernyataan ketiga Salah karena persatuan diperkuat lewat dialog yang saling menghargai, bukan dengan menyesuaikan diri pada perkembangan budaya lain; keberagaman tetap dipertahankan.' },
+
+    { n: 17, el: 'NKRI', type: 't',
+      pas: 'Perubahan iklim dan lingkungan merupakan salah satu bagian dalam perkembangan masyarakat global yang dapat mengancam keberlangsungan hidup manusia dan ekosistem serta menciptakan ketidakstabilan sosial, ekonomi dan politik yang kerap memunculkan terjadinya konflik dalam masyarakat.',
+      q: 'Klik pada pilihan Benar atau Salah dari setiap pernyataan berikut yang menunjukkan bukti bahwa Bhinneka Tunggal Ika dapat mengatasi ancaman sebagaimana ilustrasi diatas!',
+      s: [{ t: 'Bhinneka Tunggal Ika merupakan semboyan persatuan dan kesatuan yang mengakui persamaan suku, agama, bahasa, dan budaya serta identitas nasional dengan menghilangkan segala bentuk perbedaan', a: false },
+          { t: 'Bhinneka Tunggal Ika meningkatkan penghormatan dan penghargaan terhadap perbedaan, sehingga dapat mengurangi konflik dan meningkatkan kesatuan dan persatuan sebagai bagian masyarakat global', a: true },
+          { t: 'Bhinneka Tunggal Ika meningkatkan kesadaran terhadap keberagaman dan kesatuan, sehingga dapat meningkatkan partisipasi dan kontribusi masyarakat dalam membangun masyarakat global yang dinamis', a: true }],
+      x: 'Bhinneka Tunggal Ika tidak menghilangkan perbedaan (pernyataan pertama Salah); semboyan ini mempersatukan perbedaan. Penghormatan terhadap perbedaan mengurangi konflik (Benar), dan kesadaran akan keberagaman serta kesatuan meningkatkan partisipasi dan kontribusi masyarakat (Benar).' },
+
+    { n: 18, el: 'Pancasila', type: 's',
+      pas: 'Warga di sebuah lingkungan perumahan hidup berdampingan dalam keberagaman agama, budaya, dan latar belakang sosial. Mereka saling menghargai, aktif dalam kegiatan sosial bersama, dan menjaga ketertiban dengan mematuhi aturan yang berlaku.',
+      q: 'Berdasarkan ilustrasi, nilai Pancasila yang paling tepat telah diterapkan pada kondisi tersebut adalah ....',
+      o: ['Nilai Ketuhanan, karena setiap warga dapat menjalankan ibadah sesuai agama dan keyakinannya',
+          'Nilai Kemanusiaan, karena masyarakat saling membantu tanpa memandang latar belakangnya',
+          'Nilai Persatuan, karena perbedaan yang ada tidak menjadi penghalang untuk hidup rukun dan harmonis',
+          'Nilai Persatuan, karena warga berpartisipasi dalam kegiatan sosial sesuai peran kelompok budayanya',
+          'Nilai Keadilan Sosial, karena semua warga mendapatkan hak dan fasilitas secara merata tanpa kecuali'],
+      a: 2,
+      x: 'Warga hidup berdampingan dalam keberagaman, saling menghargai, dan rukun. Itu mencerminkan nilai Persatuan, karena perbedaan tidak menjadi penghalang hidup rukun dan harmonis. Pilihan D menyebut peran menurut kelompok budaya, padahal ilustrasi tidak membagi peran berdasarkan kelompok; pilihan lain menyoroti hal yang tidak ditekankan dalam ilustrasi.' },
+
+    { n: 19, el: 'UUD 1945', type: 's',
+      pas: 'Sekelompok pedagang kecil mengalami masalah karena tempat mereka mencari nafkah tiba-tiba dilarang digunakan. Hal ini terjadi tanpa kesepakatan ganti rugi, sehingga mereka merasa telah terjadi pelanggaran hak dan pengingkaran kewajiban untuk saling menghormati kepentingan masing-masing.',
+      q: 'Berdasarkan ilustrasi, solusi untuk mengatasi pelanggaran tersebut yaitu ....',
+      o: ['mengirim perwakilan pedagang untuk menyampaikan usulan agar memperoleh tempat pengganti untuk berjualan',
+          'mengumpulkan dukungan dari elemen masyarakat sebagai upaya mempertahankan haknya untuk berjualan',
+          'melakukan mediasi sehingga para pihak memahami hak dan kewajibannya yang melandasi kepentingannya',
+          'mengajukan advokasi kepada lembaga bantuan hukum untuk memastikan para pedagang berada di pihak yang benar',
+          'mewakilkan kepada lembaga swadaya masyarakat untuk membantu memperjuangkan hak-hak sebagai pengguna lahan'],
+      a: 2,
+      x: 'Para pedagang merasa hak mereka dilanggar dan kewajiban saling menghormati diabaikan. Mediasi mempertemukan para pihak agar memahami hak dan kewajiban masing-masing sehingga ditemukan penyelesaian bersama. Pilihan lain merupakan langkah sepihak atau memakai perantara tanpa menyelesaikan persoalan antarpihak.' },
+
+    { n: 20, el: 'Bhinneka Tunggal Ika', type: 's',
+      pas: 'Kehidupan suku bangsa di Indonesia sangat kaya akan keberagaman, dipengaruhi oleh faktor geografis dan sejarah. Indonesia memiliki lebih dari 1.340 suku bangsa yang tersebar di berbagai pulau, masing-masing dengan bahasa, tradisi, dan adat istiadat yang unik.',
+      q: 'Berdasarkan ilustrasi, tantangan yang dihadapi dalam menjaga integrasi nasional dalam bingkai “Bhinneka Tunggal Ika” adalah ....',
+      o: ['adanya ketimpangan kehidupan yang terjadi dalam masyarakat',
+          'munculnya sikap sukuisme dalam kehidupan bermasyarakat',
+          'hadirnya perasaan rendah diri suku tertentu dalam masyarakat',
+          'terjadinya kepunahan suku tertentu akibat kesenjangan sosial',
+          'munculnya perilaku modernisme suku tertentu yang berlebihan'],
+      a: 1,
+      x: 'Dengan lebih dari 1.340 suku bangsa, tantangan utama integrasi adalah sukuisme, yaitu menganggap suku sendiri paling unggul sehingga memicu perpecahan. Pilihan lain tidak berkaitan langsung dengan ilustrasi tentang keberagaman suku.' },
+
+    { n: 22, el: 'Pancasila', type: 't',
+      pas: 'Perkembangan global menyebabkan Pancasila menjadi representasi dari keberagaman masyarakat dunia. Pancasila dengan nilai-nilai toleransi, persatuan, dan keadilan, menjadi solusi universal dalam mengatasi tantangan perbedaan budaya dan agama di dunia. Kondisi tersebut berpotensi menjadikan bangsa Indonesia sebagai role model dalam mempromosikan kerukunan dan harmoni dari keberagaman masyarakat dunia.',
+      q: 'Klik pada pilihan benar atau salah dari setiap pernyataan berikut terkait fungsi dari diterapkannya Pancasila dalam pergaulan kehidupan global berdasarkan ilustrasi tersebut!',
+      s: [{ t: 'Pancasila dapat menjadi landasan untuk meningkatkan hubungan internasional yang harmonis dan berkeadilan', a: true },
+          { t: 'Pancasila dapat menjadi landasan untuk membangun kerja sama internasional yang efektif dan berkeadilan', a: true },
+          { t: 'Implementasi Pancasila di era global dapat meningkatkan derajat Indonesia sebagai bangsa yang unggul di dunia', a: false }],
+      x: 'Dengan nilai toleransi, persatuan, dan keadilan, Pancasila dapat menjadi landasan hubungan internasional yang harmonis dan berkeadilan (Benar) serta kerja sama internasional yang efektif dan berkeadilan (Benar). Pernyataan ketiga Salah karena meninggikan derajat Indonesia sebagai bangsa unggul bukan fungsi penerapan Pancasila yang dijelaskan ilustrasi; fungsinya sebagai landasan kerukunan dan kerja sama.' },
+
+    { n: 23, el: 'UUD 1945', type: 's',
+      pas: 'Pasal 27 ayat (2) UUD NRI Tahun 1945 menyatakan bahwa tiap-tiap warga negara berhak atas pekerjaan dan penghidupan yang layak bagi kemanusiaan.',
+      q: 'Tantangan yang dihadapi dalam mengimplementasikan pasal tersebut adalah ....',
+      o: ['penyusunan regulasi di bidang ketenagakerjaan yang membutuhkan waktu yang lama',
+          'adanya keterbatasan akses terhadap pekerjaan akibat ketidaksetaraan dan infrastruktur',
+          'tingkat keterampilan dan pendidikan di kalangan pencari kerja yang merata dan setara',
+          'adanya perbedaan standar kualitas pekerja yang berbeda-beda dari pemberi kerja',
+          'lemahnya perlindungan hukum yang diberikan oleh negara kepada pekerja anak'],
+      a: 1,
+      x: 'Pasal 27 ayat (2) menjamin hak atas pekerjaan dan penghidupan layak. Tantangan nyata dalam pelaksanaannya adalah terbatasnya akses terhadap pekerjaan akibat ketidaksetaraan dan keterbatasan infrastruktur. Pilihan C keliru karena keterampilan yang merata dan setara justru bukan hambatan; pilihan lain tidak menggambarkan hambatan utama pelaksanaan hak ini.' },
+
+    { n: 24, el: 'Bhinneka Tunggal Ika', type: 's',
+      pas: 'Reog Ponorogo merupakan bagian tak terpisahkan dari kehidupan budaya masyarakat Ponorogo, Jawa Timur. Seiring perkembangannya, Reog tidak hanya menjadi simbol budaya masyarakat Ponorogo, tetapi juga bagian dari identitas budaya nasional Indonesia. Pada tahun 2024, Reog Ponorogo resmi diakui sebagai warisan budaya takbenda oleh UNESCO, sebagai langkah penting dalam pelestarian warisan budaya bangsa dan menjadi modal sosial pembangunan Indonesia.',
+      q: 'Alasan pelestarian Reog Ponorogo menjadi modal sosial pembangunan Indonesia adalah ....',
+      o: ['tradisi lokal memperkuat promosi pariwisata untuk peningkatan ekonomi nasional',
+          'identitas budaya daerah yang diakui secara internasional mendatangkan modal pembangunan',
+          'kebudayaan menjadi identitas pembangunan bangsa di tengah maraknya gempuran budaya asing',
+          'pembangunan nasional membutuhkan identitas budaya lokal dalam menentukan prioritas pembangunan',
+          'pengakuan warisan budaya oleh UNESCO dapat menjadi modal pembangunan yang diakui dunia internasional'],
+      a: 2,
+      x: 'Reog adalah bagian dari identitas budaya nasional. Melestarikannya berarti kebudayaan menjadi identitas pembangunan bangsa, terutama di tengah derasnya budaya asing; identitas itulah yang menumbuhkan kebanggaan dan kebersamaan sebagai modal sosial. Pilihan lain hanya menyoroti sisi ekonomi, promosi, atau pengakuan internasional.' },
+
+    { n: 25, el: 'NKRI', type: 's',
+      pas: 'Pemerintah Indonesia mengadakan kegiatan Festival Budaya Nusantara yang melibatkan berbagai komunitas dari seluruh provinsi. Kegiatan ini mencakup pameran seni, pertunjukan tradisional, serta diskusi tentang keberagaman budaya Indonesia.',
+      q: 'Alasan kegiatan tersebut dapat memperkukuh persatuan dan kesatuan bangsa adalah ....',
+      o: ['memperkenalkan produk lokal untuk meningkatkan perekonomian setiap daerah',
+          'mengedepankan keberagaman budaya Indonesia yang mempererat hubungan antarwarga negara',
+          'menciptakan peluang kerja baru untuk masyarakat yang terlibat dalam pameran dan pertunjukan',
+          'memberi kesempatan kepada wisatawan lokal dan asing untuk menikmati budaya Indonesia',
+          'promosi pariwisata lokal di setiap daerah untuk menarik lebih banyak wisatawan domestik'],
+      a: 1,
+      x: 'Festival Budaya Nusantara mempertemukan komunitas dari seluruh provinsi lewat pameran, pertunjukan, dan diskusi. Dengan mengedepankan keberagaman budaya, hubungan antarwarga negara menjadi lebih erat sehingga persatuan dan kesatuan bangsa semakin kukuh. Pilihan lain hanya menyoroti manfaat ekonomi atau pariwisata.' },
+
+    { n: 26, el: 'Pancasila', type: 's',
+      pas: 'Dinamika masyarakat multikultural di Indonesia merupakan interaksi kompleks antarberbagai kelompok etnis, budaya, agama, dan sistem nilai, yang menghasilkan berbagai tantangan. Salah satu permasalahan yang dihadapi masyarakat multikultural di Indonesia adalah konflik antaragama.',
+      q: 'Peran Pancasila sebagai ideologi negara yang menjadi pemersatu dalam kehidupan berbangsa berdasarkan ilustrasi di atas adalah ...',
+      o: ['sebagai perekat hubungan umat beragama mayoritas dan minoritas serta pemerintah dalam kehidupan bernegara',
+          'menjadi pendorong adanya dialog sesama agama untuk meningkatkan kebersamaan umat dan mengurangi rasa curiga',
+          'menjadi dasar dalam melihat adanya perbedaan paham dari berbagai agama dan aliran kepercayaan dalam masyarakat',
+          'merupakan sarana untuk menguji kepekaan sosial dan rasa solidaritas kelompok dari umat beragama dalam masyarakat',
+          'sebagai dasar untuk menghargai dan menghormati perayaan hari-hari besar berbagai agama dalam masyarakat'],
+      a: 0,
+      x: 'Sebagai ideologi pemersatu, Pancasila berperan menjadi perekat hubungan umat beragama, baik mayoritas maupun minoritas, serta pemerintah dalam kehidupan bernegara. Pilihan B sampai E menggambarkan kegiatan atau dampak tertentu, bukan peran pemersatu yang menyeluruh bagi seluruh kelompok dan pemerintah.' },
+
+    { n: 27, el: 'UUD 1945', type: 's',
+      pas: 'Seorang pengusaha membuang limbah pabrik ke sungai yang mengalir di dekat pemukiman warga. Akibatnya, air menjadi tercemar dan banyak warga mengalami gangguan kesehatan. Meskipun masyarakat sudah melaporkan hal ini kepada pihak berwenang, proses hukum berjalan sangat lambat. Bahkan, muncul kabar bahwa perusahaan tersebut memberikan “uang pelican” agar kasusnya tidak diproses lebih lanjut. Warga menjadi kecewa dan kehilangan kepercayaan terhadap lembaga penegak hukum.',
+      q: 'Berdasarkan ilustrasi tersebut, tantangan utama dalam penegakan hukum yang ditunjukkan adalah....',
+      o: ['kurangnya partisipasi masyarakat dalam kegiatan pemeliharaan lingkungan hidup',
+          'lemahnya perlindungan hukum kepada terduga pelaku pencemaran lingkungan',
+          'maraknya pengaruh kekuasaan dan praktik suap dalam menjalankan proses hukum',
+          'maraknya pelanggaran hukum yang diselesaikan secara kekeluargaan',
+          'rendahnya kesadaran pengusaha dalam menjaga kelestarian lingkungan alam'],
+      a: 2,
+      x: 'Warga sudah melapor, tetapi proses hukum lambat dan muncul “uang pelican” agar kasus tidak diproses. Ini menunjukkan tantangan penegakan hukum berupa pengaruh kekuasaan dan praktik suap yang melemahkan proses hukum serta mengikis kepercayaan warga. Pilihan lain menyoroti partisipasi warga, hak terduga pelaku, atau kesadaran pengusaha, bukan hambatan penegakannya.' },
+
+    { n: 28, el: 'Bhinneka Tunggal Ika', type: 'm',
+      pas: 'Dalam rangka menjaga kebinekaan, kerja sama dan toleransi merupakan konsep yang sangat penting dalam membangun hubungan yang harmonis dan damai antara individu, kelompok, dan masyarakat. Kerjasama dapat dilakukan dalam berbagai bidang, seperti ekonomi, politik, sosial, dan budaya untuk meningkatkan efisiensi, efektivitas, dan kualitas hasil kerja. Sedangkan toleransi dilakukan dalam rangka membangun hubungan yang harmonis dan damai antara individu dan kelompok yang berbeda.',
+      q: 'Berdasarkan ilustrasi tersebut, mana saja pernyataan berikut yang menunjukkan upaya menjaga kebinekaan untuk menjadi modal sosial pembangunan nasional?',
+      o: ['Meningkatkan kualitas hidup masyarakat melalui pembangunan yang berbasis pada kebutuhan dan aspirasi masyarakat, sehingga masyarakat dapat merasa sejahtera dan bahagia.',
+          'Meningkatkan kreativitas dan inovasi melalui pertukaran ide dan pengalaman antar kelompok masyarakat, sehingga dapat mempromosikan pembangunan yang inovatif dan efektif.',
+          'Membantu meningkatkan interaksi dan pemahaman antara budaya yang berbeda serta kerja sama seni dan budaya dalam rangka meningkatkan penghargaan terhadap budaya lain.',
+          'Meningkatkan kesadaran dan rasa tanggung jawab masyarakat terhadap pembangunan nasional, sehingga masyarakat dapat merasa memiliki dan bertanggung jawab terhadap masa depan bangsa.',
+          'Menjalin kerja sama seni dan budaya dapat membantu meningkatkan penghargaan terhadap budaya serta penggunaan teknologi yang dapat meningkatkan komunikasi dan interaksi antara budaya yang berbeda.'],
+      a: [1, 2],
+      x: 'Menjaga kebinekaan lewat kerja sama dan toleransi tampak pada pertukaran ide dan pengalaman antarkelompok (B) serta peningkatan interaksi, pemahaman, dan kerja sama seni budaya yang menumbuhkan penghargaan pada budaya lain (C). Pilihan A, D, dan E lebih menyangkut hasil pembangunan, rasa tanggung jawab, atau penggunaan teknologi, bukan upaya menjaga kebinekaan secara langsung.' },
+
+    { n: 29, el: 'NKRI', type: 'm',
+      pas: 'Menjelang pemilu serentak, pemerintah dan berbagai organisasi mengadakan sosialisasi untuk pemilih pemula di tingkat SMA. Reza seorang siswa kelas XII mengikuti kegiatan sosialisasi tersebut. Ia belajar pentingnya mengenali visi misi calon wakil rakyat, menghindari politik uang, dan menggunakan hak pilih dengan bijak. Reza juga mengajak teman-temannya untuk ikut serta dalam pemilu sebagai wujud tanggung jawab warga negara.',
+      q: 'Berdasarkan ilustrasi tersebut, pernyataan manakah yang menunjukkan tujuan partisipasi pemilih pemula seperti Reza dalam pesta demokrasi?',
+      o: ['Memberikan suara untuk menentukan pemimpin yang membawa perubahan positif.',
+          'Menunjukkan jati diri sebagai pelajar yang bertanggung jawab terhadap masa depan.',
+          'Membangun kesadaran para pemilih pemula untuk terlibat dalam proses pemilihan.',
+          'Menolak segala bentuk politik uang dan memilih berdasarkan kepentingan kelompok.',
+          'Menggunakan hak pilih seseuai hati nurani dengan mempertimbangkan kompetensi pemimpin.'],
+      a: [0, 1, 2, 4],
+      x: 'Tujuan partisipasi pemilih pemula seperti Reza: memberikan suara untuk pemimpin yang membawa perubahan positif (A), menunjukkan jati diri pelajar yang bertanggung jawab (B), membangun kesadaran untuk terlibat (C), dan memakai hak pilih sesuai hati nurani dengan menimbang kompetensi pemimpin (E). D keliru karena memilih berdasarkan kepentingan kelompok bertentangan dengan memilih secara bijak.' },
+
+    { n: 30, el: 'Pancasila', type: 's',
+      pas: 'Sejak 1957, Indonesia telah mengirim lebih dari 30.000 personel TNI ke berbagai negara konflik sebagai bagian dari misi perdamaian dunia. Peran serta Indonesia ini merupakan perwujudan nilai Pancasila dan amanat Pembukaan UUD NRI Tahun 1945 untuk mewujudkan perdamaian berdasarkan kemerdekaan, perdamaian abadi, dan keadilan sosial.',
+      q: 'Keunggulan nilai Pancasila dalam peran tersebut adalah....',
+      o: ['mewujudkan solidaritas kemanusiaan melalui politik luar negeri bebas aktif',
+          'menunjukkan komitmen terhadap nilai persatuan dalam kerja sama internasional',
+          'menerapkan keadilan sosial dengan mewujudkan perdamaian di kancah global',
+          'memperkuat posisi Indonesia dalam persaingan geopolitik khususnya kawasan asia',
+          'mewujudkan tujuan nasional dengan berupaya menjaga kepentingan strategis global'],
+      a: 2,
+      x: 'Pengiriman pasukan perdamaian mengamalkan amanat Pembukaan UUD 1945 tentang perdamaian abadi dan keadilan sosial. Keunggulan nilai Pancasila tampak pada penerapan keadilan sosial dengan mewujudkan perdamaian di kancah global. Pilihan yang berorientasi persaingan geopolitik atau kepentingan strategis tidak sesuai semangat Pancasila.' }
+  ];
+  var TYPE_LABEL = { s: 'Pilih satu jawaban', m: 'Pilih semua yang benar', t: 'Benar atau Salah' };
+  var TYPE_HINT = { s: 'Pilihan ganda', m: 'Pilihan ganda kompleks', t: 'Kompleks kategori' };
+
+  /* ---------- storage ---------- */
+  var KEY = 'kuis-ppkn-tka-2025';
+  function load() {
+    try { var d = JSON.parse(localStorage.getItem(KEY) || 'null'); if (d && d.board) return d; } catch (e) {}
+    return { board: [], prefs: {} };
+  }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(store)); } catch (e) {} }
+  var store = load();
+
+  /* ---------- screens ---------- */
+  function show(id) {
+    ['start', 'quiz', 'result'].forEach(function (s) { $('#s-' + s).hidden = s !== id; });
+    window.scrollTo(0, 0);
+  }
+
+  /* ---------- start screen ---------- */
+  var chosen = (store.prefs && store.prefs.avatar) || 'peci';
+  function buildAvatars() {
+    var box = $('#avatars');
+    AV.forEach(function (a) {
+      var inp = h('input', { type: 'radio', name: 'avatar', value: a.id, 'aria-label': a.n });
+      if (a.id === chosen) inp.checked = true;
+      inp.addEventListener('change', function () { chosen = a.id; });
+      box.append(h('label', { class: 'av' }, inp, h('span', { class: 'av-card' }, avEl(a.id, 'av-img'), a.n)));
+    });
+  }
+  $('#nm').value = (store.prefs && store.prefs.name) || '';
+  buildAvatars();
+
+  /* ---------- quiz state ---------- */
+  var S = null;
+  var HINTS_MAX = 2;
+
+  function startQuiz(ids, practice) {
+    var name = ($('#nm').value || '').trim() || 'Pelajar';
+    if (!practice) { store.prefs = { name: ($('#nm').value || '').trim(), avatar: chosen }; save(); }
+    S = {
+      name: S && practice ? S.name : name, avatar: S && practice ? S.avatar : chosen,
+      order: ids, i: 0, score: 0, base: 0, streak: 0, best: 0, full: 0, log: [],
+      hints: HINTS_MAX, t0: Date.now(), qt: Date.now(), practice: !!practice,
+      answered: false, sel: null, tf: [], gone: [], hinted: false, timer: null
+    };
+    $('#q-av').innerHTML = avSvg(S.avatar);
+    $('#q-name').textContent = S.name + (practice ? ' · latihan' : '');
+    show('quiz');
+    renderHeader();
+    renderQ();
+    S.timer = setInterval(tick, 250);
+  }
+
+  function tick() {
+    if (!S) return;
+    $('#q-time').textContent = fmt(Date.now() - S.t0);
+    var bar = S.speedEl;
+    if (bar && !S.answered) {
+      var t = (Date.now() - S.qt) / 1000;
+      var left = Math.max(0, 40 - t);
+      bar.i.style.transform = 'scaleX(' + (left / 40) + ')';
+      bar.i.style.background = t <= 20 ? 'var(--green)' : t <= 40 ? '#E0A100' : 'var(--red)';
+      bar.t.textContent = t <= 20 ? 'Bonus cepat +5' : t <= 40 ? 'Bonus cepat +2' : 'Bonus cepat habis';
+    }
+  }
+
+  function renderHeader() {
+    $('#q-score').textContent = S.score;
+    $('#q-streak').textContent = S.streak;
+    $('#q-streak-box').className = 'stat' + (S.streak >= 3 ? ' hot' : '');
+    var pct = Math.round((S.i / S.order.length) * 100);
+    $('#q-prog-i').style.width = pct + '%';
+    $('#q-prog').setAttribute('aria-valuenow', pct);
+  }
+
+  var UI = {};
+  function renderQ() {
+    var q = Q[S.order[S.i]];
+    S.answered = false; S.sel = q.type === 'm' ? [] : null;
+    S.tf = q.type === 't' ? [null, null, null] : []; S.gone = []; S.hinted = false; S.qt = Date.now();
+    var c = $('#qcard'); c.innerHTML = '';
+
+    var speedFill = h('i'), speedTxt = h('span', {}, 'Bonus cepat +5');
+    S.speedEl = { i: speedFill, t: speedTxt };
+
+    c.append(
+      h('div', { class: 'chips' },
+        h('span', { class: 'qno' }, 'Soal ' + (S.i + 1) + '/' + S.order.length),
+        h('span', { class: 'chip k' }, q.el),
+        h('span', { class: 'chip' }, TYPE_HINT[q.type])),
+      h('div', { class: 'passage' }, h('p', {}, q.pas)),
+      h('p', { class: 'qtext' }, q.q),
+      h('div', { class: 'speed' }, h('div', { class: 'track' }, speedFill), speedTxt),
+      h('p', { class: 'eyebrow' }, TYPE_LABEL[q.type])
+    );
+
+    var body = h('div', { class: q.type === 't' ? 'tf' : 'opts', role: q.type === 's' ? 'radiogroup' : 'group' });
+    UI = { body: body, opts: [], rows: [] };
+    if (q.type === 't') {
+      q.s.forEach(function (st, i) {
+        var bT = h('button', { class: 'tfb', type: 'button', 'aria-pressed': 'false', onclick: function () { setTf(i, true); } }, 'Benar');
+        var bF = h('button', { class: 'tfb', type: 'button', 'aria-pressed': 'false', onclick: function () { setTf(i, false); } }, 'Salah');
+        var row = h('div', { class: 'tf-row' }, h('div', { class: 'st' }, st.t), h('div', { class: 'tf-btns' }, bT, bF));
+        UI.rows.push({ row: row, bT: bT, bF: bF });
+        body.append(row);
+      });
+    } else {
+      q.o.forEach(function (t, i) {
+        var b = h('button', { class: 'opt' + (q.type === 'm' ? ' m' : ''), type: 'button', role: q.type === 's' ? 'radio' : 'checkbox', 'aria-checked': 'false', onclick: function () { pick(i); } },
+          h('span', { class: 'key' }, L[i]), h('span', { class: 'tx' }, t));
+        UI.opts.push(b);
+        body.append(b);
+      });
+    }
+    c.append(body);
+
+    UI.fb = h('div', { 'aria-live': 'polite' });
+    UI.hint = null;
+    UI.submit = h('button', { class: 'btn primary', type: 'button', disabled: true, onclick: check }, 'Jawab');
+    var act = h('div', { class: 'actions' });
+    if (q.type === 's') {
+      UI.hint = h('button', { class: 'btn alt', type: 'button', onclick: useHint }, '50:50 (' + S.hints + ')');
+      if (S.hints <= 0) UI.hint.disabled = true;
+      act.append(UI.hint);
+    } else act.append(h('span'));
+    act.append(UI.submit);
+    c.append(act, UI.fb);
+    tick();
+  }
+
+  function pick(i) {
+    if (S.answered) return;
+    var q = Q[S.order[S.i]];
+    if (UI.opts[i].classList.contains('gone')) return;
+    if (q.type === 's') S.sel = i;
+    else { var k = S.sel.indexOf(i); if (k >= 0) S.sel.splice(k, 1); else S.sel.push(i); }
+    UI.opts.forEach(function (b, j) {
+      var on = q.type === 's' ? S.sel === j : S.sel.indexOf(j) >= 0;
+      b.setAttribute('aria-checked', on ? 'true' : 'false');
+    });
+    UI.submit.disabled = q.type === 's' ? S.sel == null : S.sel.length === 0;
+  }
+  function setTf(i, v) {
+    if (S.answered) return;
+    S.tf[i] = v;
+    var r = UI.rows[i];
+    r.bT.setAttribute('aria-pressed', v === true ? 'true' : 'false');
+    r.bF.setAttribute('aria-pressed', v === false ? 'true' : 'false');
+    UI.submit.disabled = S.tf.some(function (x) { return x === null; });
+  }
+  function useHint() {
+    if (S.answered || S.hints <= 0 || S.hinted) return;
+    var q = Q[S.order[S.i]];
+    var wrong = [0, 1, 2, 3, 4].filter(function (i) { return i !== q.a && i !== S.sel; });
+    shuffle(wrong).slice(0, 2).forEach(function (i) { UI.opts[i].classList.add('gone'); UI.opts[i].setAttribute('aria-hidden', 'true'); S.gone.push(i); });
+    S.hints--; S.hinted = true;
+    UI.hint.textContent = '50:50 (' + S.hints + ')';
+    UI.hint.disabled = true;
+  }
+
+  /* ---------- scoring ---------- */
+  function check() {
+    if (S.answered) return;
+    var q = Q[S.order[S.i]];
+    var secs = (Date.now() - S.qt) / 1000;
+    var frac = 0, userDesc = '';
+    if (q.type === 's') {
+      frac = S.sel === q.a ? 1 : 0;
+      userDesc = L[S.sel] + '. ' + q.o[S.sel];
+    } else if (q.type === 'm') {
+      var hit = S.sel.filter(function (i) { return q.a.indexOf(i) >= 0; }).length;
+      var bad = S.sel.length - hit;
+      frac = Math.max(0, (hit - bad) / q.a.length);
+      userDesc = S.sel.slice().sort().map(function (i) { return L[i]; }).join(', ');
+    } else {
+      var ok = q.s.filter(function (s, i) { return S.tf[i] === s.a; }).length;
+      frac = ok / q.s.length;
+      userDesc = S.tf.map(function (v, i) { return (i + 1) + ': ' + (v ? 'Benar' : 'Salah'); }).join(' · ');
+    }
+    var full = frac === 1;
+    var base = Math.round(frac * 10);
+    var bonusSpeed = 0, bonusStreak = 0;
+    if (S.hinted) base = Math.max(0, base - 3);
+    if (full) {
+      S.streak++; S.full++;
+      if (!S.hinted) bonusSpeed = secs <= 20 ? 5 : secs <= 40 ? 2 : 0;
+      if (S.streak >= 3) bonusStreak = 3;
+      if (S.streak > S.best) S.best = S.streak;
+    } else S.streak = 0;
+    var pts = base + bonusSpeed + bonusStreak;
+    S.score += pts; S.base += base; S.answered = true;
+    S.log.push({ id: q.n, el: q.el, q: q, frac: frac, base: base, pts: pts, secs: secs, user: userDesc });
+    renderHeader();
+    markAnswers(q);
+    showFeedback(q, frac, pts, base, bonusSpeed, bonusStreak, secs);
+  }
+
+  function correctList(q) {
+    if (q.type === 's') return h('p', {}, h('b', {}, L[q.a] + '. '), q.o[q.a]);
+    if (q.type === 'm') return h('ul', {}, q.a.map(function (i) { return h('li', {}, h('b', {}, L[i] + '. '), q.o[i]); }));
+    return h('ul', {}, q.s.map(function (s) { return h('li', {}, h('b', {}, s.a ? 'BENAR: ' : 'SALAH: '), s.t); }));
+  }
+
+  function markAnswers(q) {
+    UI.submit.disabled = true;
+    if (UI.hint) UI.hint.disabled = true;
+    if (q.type === 't') {
+      q.s.forEach(function (s, i) {
+        var r = UI.rows[i], mine = S.tf[i];
+        r.bT.disabled = r.bF.disabled = true;
+        r.row.classList.add(mine === s.a ? 'ok' : 'no');
+        var cor = s.a ? r.bT : r.bF, wr = s.a ? r.bF : r.bT;
+        cor.classList.add('correct');
+        if (mine !== s.a) wr.classList.add('wrong');
+      });
+    } else {
+      var ans = q.type === 's' ? [q.a] : q.a;
+      var mine = q.type === 's' ? [S.sel] : S.sel;
+      UI.opts.forEach(function (b, i) {
+        b.disabled = true;
+        if (ans.indexOf(i) >= 0) b.classList.add('correct');
+        else if (mine.indexOf(i) >= 0) b.classList.add('wrong');
+      });
+    }
+  }
+
+  function showFeedback(q, frac, pts, base, bs, bst, secs) {
+    var cls = frac === 1 ? 'ok' : frac > 0 ? 'mid' : 'no';
+    var head = frac === 1 ? 'Benar!' : frac > 0 ? 'Sebagian benar' : 'Belum tepat';
+    var bonus = [];
+    if (bs) bonus.push('bonus cepat +' + bs + ' (' + secs.toFixed(0) + ' detik)');
+    if (bst) bonus.push('bonus beruntun +' + bst);
+    if (S.hinted) bonus.push('potongan 50:50 −3');
+    var fb = h('div', { class: 'fb ' + cls },
+      h('h3', {}, head + ' ', h('em', {}, '+' + pts + ' poin')),
+      bonus.length ? h('p', { class: 'bonus' }, 'Poin dasar ' + base + ' · ' + bonus.join(' · ')) : null,
+      frac < 1 ? h('div', {}, h('span', { class: 'tag' }, 'Jawaban yang benar'), correctList(q)) : null,
+      h('div', { class: 'exp' }, h('b', {}, 'Pembahasan'), q.x));
+    UI.fb.innerHTML = '';
+    UI.fb.append(fb);
+    if (frac < 1 && !reduced) { $('#qcard').classList.remove('shake'); void $('#qcard').offsetWidth; $('#qcard').classList.add('shake'); }
+    var last = S.i === S.order.length - 1;
+    var next = h('button', { class: 'btn primary', type: 'button', id: 'next', onclick: nextQ }, last ? 'Lihat hasil' : 'Soal berikutnya');
+    UI.fb.append(h('div', { class: 'row', style: 'margin-top:14px;justify-content:flex-end' }, next));
+    next.focus({ preventScroll: true });
+    fb.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'nearest' });
+  }
+
+  function nextQ() {
+    if (!S.answered) return;
+    if (S.i >= S.order.length - 1) return finish();
+    S.i++;
+    renderHeader();
+    renderQ();
+    window.scrollTo(0, 0);
+  }
+
+  /* ---------- result ---------- */
+  function title(n) {
+    if (n >= 90) return 'Garuda Emas';
+    if (n >= 75) return 'Pelajar Pancasilais';
+    if (n >= 60) return 'Warga Teladan';
+    return 'Ayo Belajar Lagi';
+  }
+  function finish() {
+    clearInterval(S.timer);
+    var total = Date.now() - S.t0;
+    var n = S.order.length;
+    var nilai = Math.round((S.base / (n * 10)) * 100);
+    S.time = total; S.nilai = nilai;
+    $('#q-prog-i').style.width = '100%';
+    renderResult(nilai, total);
+    show('result');
+  }
+
+  function renderResult(nilai, total) {
+    var r = $('#s-result'); r.innerHTML = '';
+    var n = S.order.length;
+    var scoreEl = h('div', { class: 'big-score' }, '0');
+    var wrongIds = S.log.filter(function (l) { return l.frac < 1; }).map(function (l) { return Q.indexOf(l.q); });
+
+    var top = h('div', { class: 'card stack' },
+      h('div', { class: 'res-top' },
+        avEl(S.avatar, 'res-av'),
+        h('div', {}, h('div', { class: 'eyebrow' }, S.practice ? 'Latihan soal yang salah' : 'Hasil kuis'),
+          h('h2', {}, title(nilai) + ', ' + S.name))),
+      h('div', {}, h('div', { class: 'eyebrow' }, 'Skor total'), scoreEl),
+      h('div', { class: 'grid4' },
+        statBox('Nilai (0–100)', nilai),
+        statBox('Waktu selesai', fmt(total)),
+        statBox('Benar penuh', S.full + '/' + n),
+        statBox('Beruntun terbaik', S.best)),
+      h('p', { class: 'empty' }, 'Rata-rata ' + (total / 1000 / n).toFixed(0) + ' detik per soal. Skor memuat bonus cepat dan beruntun, nilai hanya dihitung dari poin dasar.'),
+      h('div', { class: 'row' },
+        h('button', { class: 'btn primary', type: 'button', onclick: function () { startQuiz(shuffle(allIds()), false); } }, 'Ulangi kuis'),
+        wrongIds.length ? h('button', { class: 'btn alt', type: 'button', onclick: function () { startQuiz(shuffle(wrongIds), true); } }, 'Latih ' + wrongIds.length + ' soal yang salah') : null,
+        h('button', { class: 'btn', type: 'button', onclick: function () { show('start'); } }, 'Menu awal')));
+    r.append(top);
+
+    // breakdown per elemen
+    var groups = {};
+    S.log.forEach(function (l) { var g = groups[l.el] = groups[l.el] || { f: 0, t: 0 }; g.t++; if (l.frac === 1) g.f++; });
+    var bk = h('div', { class: 'bk' });
+    Object.keys(groups).forEach(function (k) {
+      var g = groups[k];
+      bk.append(h('div', { class: 'bk-row' }, h('span', {}, k), h('div', { class: 'track' }, h('i', { style: 'width:' + Math.round(g.f / g.t * 100) + '%' })), h('span', {}, g.f + '/' + g.t)));
+    });
+    r.append(h('div', { class: 'card stack' }, h('h2', { style: 'font-size:1.3rem' }, 'Penguasaan per elemen'), bk));
+
+    // review
+    var list = h('div', { class: 'rv-list' });
+    S.log.forEach(function (l, idx) {
+      var st = l.frac === 1 ? ['ok', 'Benar'] : l.frac > 0 ? ['mid', 'Sebagian'] : ['no', 'Salah'];
+      var det = h('details', { class: 'rv' });
+      if (l.frac < 1) det.open = true;
+      det.append(h('summary', {},
+        h('span', { class: 'sn' }, (idx + 1) + '.'),
+        h('span', { class: 'sx' }, l.q.q.length > 90 ? l.q.q.slice(0, 88) + '…' : l.q.q),
+        h('span', { class: 'badge ' + st[0] }, st[1])),
+        h('div', { class: 'rb' },
+          h('p', {}, l.q.pas),
+          h('p', {}, h('b', {}, 'Pertanyaan: '), l.q.q),
+          h('p', {}, h('b', {}, 'Jawabanmu: '), l.user),
+          h('div', {}, h('b', {}, 'Jawaban yang benar:'), correctList(l.q)),
+          h('p', {}, h('b', {}, 'Pembahasan: '), l.q.x)));
+      list.append(det);
+    });
+    var wrongCount = wrongIds.length;
+    var tgl = h('button', { class: 'btn', type: 'button', onclick: function () {
+      list.hidden = !list.hidden; tgl.textContent = list.hidden ? 'Tampilkan pembahasan semua soal' : 'Sembunyikan pembahasan';
+    } }, wrongCount ? 'Sembunyikan pembahasan' : 'Tampilkan pembahasan semua soal');
+    if (!wrongCount) list.hidden = true;
+    r.append(h('div', { class: 'card stack' },
+      h('h2', { style: 'font-size:1.3rem' }, 'Pembahasan'),
+      h('p', { class: 'empty' }, wrongCount ? wrongCount + ' soal belum benar penuh, dibuka otomatis di bawah.' : 'Semua jawabanmu benar penuh. Pembahasan tetap bisa dibuka.'),
+      h('div', { class: 'row' }, tgl), list));
+
+    // count up
+    var target = S.score;
+    if (reduced || target === 0) scoreEl.textContent = target;
+    else {
+      var t0 = performance.now();
+      (function step(t) {
+        var p = Math.min(1, (t - t0) / 900);
+        scoreEl.textContent = Math.round(target * (1 - Math.pow(1 - p, 3)));
+        if (p < 1) requestAnimationFrame(step);
+      })(t0);
+    }
+  }
+  function statBox(label, val) { return h('div', { class: 'stat' }, h('small', {}, label), h('b', {}, val)); }
+  function allIds() { return Q.map(function (_, i) { return i; }); }
+
+  /* ---------- wiring ---------- */
+  $('#go').addEventListener('click', function () {
+    var ids = allIds();
+    startQuiz($('#shuf').checked ? shuffle(ids) : ids, false);
+  });
+  $('#nm').addEventListener('keydown', function (e) { if (e.key === 'Enter') $('#go').click(); });
+
+  document.addEventListener('keydown', function (e) {
+    if ($('#s-quiz').hidden || !S || e.ctrlKey || e.metaKey || e.altKey) return;
+    var q = Q[S.order[S.i]];
+    if (/^[1-5]$/.test(e.key) && !S.answered && q.type !== 't') { pick(+e.key - 1); }
+    else if (e.key === 'Enter') {
+      var a = document.activeElement;
+      if (a && (a.tagName === 'BUTTON' || a.tagName === 'INPUT')) return;
+      if (S.answered) nextQ(); else if (UI.submit && !UI.submit.disabled) check();
+    }
+  });
+})();
+</script>
+
+</body>
+</html>
